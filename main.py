@@ -1,10 +1,11 @@
-import os
 import argparse
-import tqdm
-import torch
+import os
 
+import torch
+import tqdm
 import transferattack
 from transferattack.utils import *
+
 
 def get_parser():
     parser = argparse.ArgumentParser(description='Generating transferable adversaria examples')
@@ -17,6 +18,7 @@ def get_parser():
     parser.add_argument('--momentum', default=0., type=float, help='the decay factor for momentum based attack')
     parser.add_argument('--model', default='resnet18', type=str, help='the source surrogate model')
     parser.add_argument('--ensemble', action='store_true', help='enable ensemble attack')
+    parser.add_argument('--random_start', default=False, type=bool, help='set random start')
     parser.add_argument('--input_dir', default='./data', type=str, help='the path for custom benign images, default: untargeted attack data')
     parser.add_argument('--output_dir', default='./results', type=str, help='the path to store the adversarial patches')
     parser.add_argument('--targeted', action='store_true', help='targeted attack')
@@ -34,12 +36,9 @@ def main():
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batchsize, shuffle=False, num_workers=4)
 
     if not args.eval:
-        if args.attack in transferattack.attack_zoo:
-            if args.ensemble:
-                args.model = ['resnet18', 'densenet121', 'vit_base_patch16_224', 'pit_b_224'] # example for ensemble attack
-            attacker = transferattack.attack_zoo[args.attack.lower()](model_name = args.model, targeted = args.targeted)
-        else:
-            raise Exception("Unspported attack algorithm {}".format(args.attack))
+        if args.ensemble or len(args.model.split(',')) > 1:
+            args.model = args.model.split(',')
+        attacker = transferattack.load_attack_class(args.attack)(model_name=args.model, targeted=args.targeted)
 
         for batch_idx, [images, labels, filenames] in tqdm.tqdm(enumerate(dataloader)):
             perturbations = attacker(images, labels)
@@ -47,7 +46,7 @@ def main():
     else:
         asr = dict()
         res = '|'
-        for model_name, model in load_pretrained_model(cnn_model_paper,vit_model_paper):
+        for model_name, model in load_pretrained_model(cnn_model_paper, vit_model_paper):
             model = wrap_model(model.eval().cuda())
             for p in model.parameters():
                 p.requires_grad = False
@@ -58,9 +57,11 @@ def main():
                 pred = model(images.cuda())
                 correct += (labels.numpy() == pred.argmax(dim=1).detach().cpu().numpy()).sum()
                 total += labels.shape[0]
-            if args.targeted: # correct: pred == target_label
+            if args.targeted:
+                # correct: pred == target_label
                 asr[model_name] = (correct / total) * 100
-            else: # correct: pred == original_label
+            else:
+                # correct: pred == original_label
                 asr[model_name] = (1 - correct / total) * 100
             print(model_name, asr[model_name])
             res += ' {:.1f} |'.format(asr[model_name])
@@ -73,4 +74,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

@@ -1,6 +1,5 @@
-<h1 align="center">TransferAttack</h1>
+<h1 align="center">TransferAttack: Bag of Tricks</h1>
 
-## Sub-branch: Bag of tricks
 
 Here, we intetegrate some of useful tricks to enhance the performance of existing adversarial attacks. Feel free to search the optima hyper-parameter to find the real-performance of different attacks. New methods may not be involved here. Please check [the official TA library](https://github.com/Trustworthy-AI-Group/TransferAttack) for recent updates on the design of transferable adversarial attacks. 
 

@@ -4,6 +4,8 @@
 
 Here, we intetegrate some of useful tricks to enhance the performance of existing adversarial attacks. Feel free to search the optima hyper-parameter to find the real-performance of different attacks. 
 
+***Notice*** The use of tricks to boost the performance depends on different models, datasets, and even library versions. While we use different images in our paper with this open-source library,  we will continue our effort to update the known hyper-parameters for different attacks under the setting of this library:) 
+
 ## About
 <p align="center">
   <a href="https://github.com/Trustworthy-AI-Group/TransferAttack/stargazers"> <img src="https://img.shields.io/github/stars/Trustworthy-AI-Group/TransferAttack.svg?style=popout-square" alt="GitHub stars"></a>

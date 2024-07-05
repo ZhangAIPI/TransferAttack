@@ -1,5 +1,9 @@
 <h1 align="center">TransferAttack</h1>
 
+## Sub-branch: Bag of tricks
+
+Here, we intetegrate some of useful tricks to enhance the performance of existing adversarial attacks. Feel free to search the optima hyper-parameter to find the real-performance of different attacks. 
+
 ## About
 <p align="center">
   <a href="https://github.com/Trustworthy-AI-Group/TransferAttack/stargazers"> <img src="https://img.shields.io/github/stars/Trustworthy-AI-Group/TransferAttack.svg?style=popout-square" alt="GitHub stars"></a>
